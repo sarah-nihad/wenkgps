@@ -17,7 +17,7 @@ class Login extends Component {
     return (
     // <div id='rrlogin'>
      
-      <Iframe url={`http://tracking.wenkgps.com/login.html?access_type=-1&duration=3600&redirect_uri=${host}Home`}
+      <Iframe url="http://tracking.wenkgps.com/login.html?access_type=-1&duration=3600&redirect_uri=http://add-unit.herokuapp.com/Home"
         width="100%"
        height="550px"
         id="myId"
