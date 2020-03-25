@@ -1,0 +1,214 @@
+
+#navmai{
+    display: flex;
+    background-color: #dce2f5;
+}
+#itemnav{
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+}
+#teamnav{
+    display: flex;
+    min-width: 8%;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+    /* line-height: 3; */
+    color: #1b4963;
+}
+#file1{
+    border: none;
+    background-color: pink;
+    color: blue;
+}
+.form-control {
+    display: block;
+    width: 20%; 
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    color: #327093;
+}
+
+#upload{
+    background-color: #327093;
+    color: #fdfdfd;
+    width: 10%;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 0px 5px 1px rgb(185, 184, 184); 
+    margin-left: 2%;
+}
+#upload:hover{
+    transform: scale(1.05);
+    transition-duration: .5s;
+    transition-timing-function: linear;
+}
+#maindivbtn{
+    width: 90%;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    margin-top: 20px;
+}
+#tbldiv{
+    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    flex-direction: column;
+    box-shadow: 0px 0px 4px 0px #808080d9;
+    margin-top: 30px;
+}
+#maintbldiv{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+#homediv{
+    background-image: url(./logo-bg.png);
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+       /* background-size: cover; */
+     height: 600px;
+       width: 100%; 
+}
+#btntbladd{
+     /* background-color: #327093; */
+     color: #327093;
+     /* width: 10%; */
+     /* height: 35px; */
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     border-radius: 5px;
+     cursor: pointer;
+     box-shadow: 0px 0px 5px 1px rgb(185, 184, 184);
+     /* margin-left: 2%; */
+     font-size: 25px;
+}
+tr,td{
+  align-items: center;
+  text-align: center;
+  font-weight: 500;
+}
+th{
+    color: #145579;
+}
+.css-2b097c-container {
+    position: relative;
+    box-sizing: border-box;
+    width: 50%;
+}
+#d_type{
+    margin-right: 1%;
+    font-weight: 500;
+    color: #8c0606;
+}
+#addall{
+    background-color: #a60023;
+    color: #fff;
+        min-width: 25%;
+      height: 35px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: 0 0 5px 1px #999;
+        /* margin-left: 2%; */
+        font-size: 15px;
+        padding: 4px;
+       
+}
+#addall:hover{
+    border: 2px solid #A60023;
+    background-color: #fff;
+    color: #A60023;
+    transform: scale(1.05);
+    transition-duration: .5s;
+    transition-timing-function: linear;
+}
+#addall:active{
+    border: none;
+    background-color: #A60023;
+    color: #fff;
+    transform: scale(1);
+    transition-duration: .2s;
+    transition-timing-function: linear;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+#albtndiv{
+  
+    width: 38%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+
+}
+#temfile{
+    margin-left: 5%;
+    border: 2px solid #327093;
+    width: 25%;
+    height: 35px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px; 
+    box-shadow: 0 0 5px 1px #999;
+}
+#temfile:hover{
+    border: 2px solid #327093;
+    background-color: #327093;
+    color: #ffffff;
+    transform: scale(1.01);
+    cursor: pointer;
+    /* transition-duration: .5s;
+    transition-timing-function: linear; */
+}
+#temfile:active{
+    border: none;
+    background-color: #327093;
+    color: #fff;
+    transform: scale(1);
+    transition-duration: .2s;
+    transition-timing-function: linear;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+a {
+    color:#327093 ;
+}
+ a:hover{
+  text-decoration: none;
+}
