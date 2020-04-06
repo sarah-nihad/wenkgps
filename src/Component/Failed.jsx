@@ -1,13 +1,12 @@
 import React,{Component} from 'react';
-import { Table, Navbar } from 'react-bootstrap';
-import { Link, Redirect  } from 'react-router-dom';
+import {  Navbar } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import MaterialDatatable from "material-datatable";
 import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
 class Failed extends Component{
@@ -33,9 +32,9 @@ class Failed extends Component{
     componentDidMount(){
         var storedNames = JSON.parse(localStorage.getItem("employees"));
       this.setState({data1:storedNames})
-        console.log('storedNames',storedNames);
+        // console.log('storedNames',storedNames);
         setTimeout(() => {
-            console.log('data1',this.state.data1);
+       
             
             let arr = [];
             for (let index = 0; index < this.state.data1.length; index++) {
@@ -65,7 +64,7 @@ class Failed extends Component{
 
 
     render(){
-       const { selectedOption } = this.state;
+      
         const columns = [
      
           { name: " Name  ", field: "name" },
@@ -116,12 +115,12 @@ class Failed extends Component{
 
 
         return(
-            <div>
+            <div id="my-node"   >
 
 <Navbar expand="lg" id="navmai">
 
 
-<Navbar.Brand style={{ paddingLeft: '3%' }}>  <img src={require('./logo.png')} style={{ height: 30 }} /> </Navbar.Brand>
+<Navbar.Brand style={{ paddingLeft: '3%' }}>  <img src={require('./logo.png')} style={{ height: 30 }} alt='img' /> </Navbar.Brand>
 <Navbar.Toggle aria-controls="basic-navbar-nav" style={{ color: 'white' }} />
 <Navbar.Collapse id="basic-navbar-nav" style={{ color: 'white' }} >
 
@@ -153,12 +152,16 @@ class Failed extends Component{
 </Navbar>
 <Link to ={`/User?id=${cookies.get('iduser')}&nm=${cookies.get('username')}`}>
 <div style={{width:'20%',textAlign:'center',marginTop:'2%',cursor:'pointer'}}  >
+
     <KeyboardReturnIcon style={{color:'#901101',boxShadow:'1px 1px 3px gray',fontSize:'30px'}}  />
     </div></Link>
-<div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+  
+
+<div  style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
     <div id='txtf'  >Failed To Add Units</div>
+   
 </div>
-<div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center',marginTop:'2%'}} >
+<div  style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center',marginTop:'2%'}} >
 <MuiThemeProvider theme={this.getMuiTheme()}>
                   <MaterialDatatable
                     data={this.state.data}
@@ -167,6 +170,7 @@ class Failed extends Component{
                   />
                 </MuiThemeProvider>
                 </div>
+             
             </div>
         );
         }

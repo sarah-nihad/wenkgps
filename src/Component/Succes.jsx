@@ -1,13 +1,10 @@
 import React,{Component} from 'react';
-import { Table, Navbar } from 'react-bootstrap';
-import { Link, Redirect  } from 'react-router-dom';
+import { Navbar } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import MaterialDatatable from "material-datatable";
 import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
 class Succes extends Component{
@@ -34,7 +31,7 @@ class Succes extends Component{
 <Navbar expand="lg" id="navmai">
 
 
-<Navbar.Brand style={{ paddingLeft: '3%' }}>  <img src={require('./logo.png')} style={{ height: 30 }} /> </Navbar.Brand>
+<Navbar.Brand style={{ paddingLeft: '3%' }}>  <img src={require('./logo.png')} style={{ height: 30 }} alt='alt' /> </Navbar.Brand>
 <Navbar.Toggle aria-controls="basic-navbar-nav" style={{ color: 'white' }} />
 <Navbar.Collapse id="basic-navbar-nav" style={{ color: 'white' }} >
 
