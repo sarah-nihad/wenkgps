@@ -17,8 +17,6 @@ import axios from 'axios';
 import Lottie from "lottie-react-web";
 import animation from "./animation.json";
 import Tooltip from '@material-ui/core/Tooltip';
-
-import Table1 from './Table1'
 import load from "./load.json";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
@@ -111,7 +109,7 @@ class Accounts extends Component {
     })
    
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         
         var counter3=0;
         for (let index = 0; index < res.data.items.length; index++) {
@@ -121,7 +119,7 @@ class Accounts extends Component {
             method: "GET",
           })
           .then((res1) => {
-           console.log('serv',res1.data);
+          //  console.log('serv',res1.data);
            
 if (res1.data.settings.personal.services.create_units!==undefined && res1.data.settings.personal.services.import_export!==undefined) {
   this.setState({ dataLength: res.data.items.length })
@@ -138,7 +136,7 @@ create_units:(res1.data.settings.personal.services.create_units!==undefined?(res
 
           })
           .catch((err)=>{
-              console.log(err);
+              // console.log(err);
               
           })
        
@@ -147,7 +145,7 @@ create_units:(res1.data.settings.personal.services.create_units!==undefined?(res
         if (counter3===res.data.items.length) {
             this.setState({ spindevice: false,check:'login'})
             this.setState({accountData:arr})
-            console.log(counter3===res.data.items.length);
+            // console.log(counter3===res.data.items.length);
             
            }
     
@@ -178,8 +176,8 @@ create_units:(res1.data.settings.personal.services.create_units!==undefined?(res
                     toast.success("All Units Closed");
                     this.setState({ spin: false });
                     this.componentDidMount()
-                    console.log('c',counter3);
-                    console.log('l',this.state.accountData.length);
+                    // console.log('c',counter3);
+                    // console.log('l',this.state.accountData.length);
                                        
                    }                                           
             })
@@ -202,8 +200,8 @@ async  closeAllImport(){
                     toast.success("All Import Export Closed");
                     this.setState({ spin: false });
                     this.componentDidMount()
-                    console.log('c',counter3);
-                    console.log('l',this.state.accountData.length);
+                    // console.log('c',counter3);
+                    // console.log('l',this.state.accountData.length);
                                        
                    }                                           
             })
@@ -238,7 +236,7 @@ async  closeAllImport(){
       <Context.Consumer>
         {ctx => {
           if (this.state.check === "notlogin") {
-            // return  <Redirect to='/'></Redirect>;
+            return  <Redirect to='/'></Redirect>;
             return <div></div>
           } else if (this.state.check === "login" && this.state.spindevice === false) {
 
