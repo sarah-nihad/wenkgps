@@ -7,7 +7,7 @@ import Si from './Component/Si';
 import Failed from './Component/Failed';
 import Succes from './Component/Succes';
 import Form1 from './Component/Form1';
-
+import Accounts from './Component/Accounts';
 
 class App extends Component{
 render() {
@@ -30,7 +30,7 @@ render() {
     <Route path ='/Succes' component={Succes} />
     <Route path ='/Form1' component={Form1} />
    
-
+    <Route path ='/Accounts' component={Accounts} />
   
    
     </Context.Provider>

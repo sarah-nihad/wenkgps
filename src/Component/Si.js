@@ -242,6 +242,18 @@ class Si extends Component {
     <div id='inimg' >Adding from Template</div>
                  <img src={require('./template.png')} style={{width:'150px',height:'150px'}} alt='alt' />
             </div>
+
+
+
+            <div id='imgexel'  onClick={()=>{
+  window.location.href = `/Accounts?id=${this.state.id}&nm=${this.state.name}`;
+}} >
+    <div id='inimg' >Check Accounts</div>
+                 <img src={require('./security.png')} style={{width:'150px',height:'150px'}} alt='alt' />
+            </div>
+
+
+
 </div>
 
                </div>

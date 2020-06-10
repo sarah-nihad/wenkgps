@@ -11,6 +11,7 @@ import Cookies from "universal-cookie";
 import Context from './context';
 import Lottie from "lottie-react-web";
 import animation from "./animation.json";
+import Dialog from './Dialog';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const cookies = new Cookies();
@@ -78,6 +79,10 @@ class Form extends Component {
       phone: '',
       tagid:'',
       spindevice: true,
+      spanmessage:false,
+      item_name:'',
+      satellites:'' ,
+      code:'',
     }
     this.handleChange2 = this.handleChange2.bind(this);
 
@@ -144,7 +149,7 @@ class Form extends Component {
     })
 
       .then(res1 => {
-        // console.log('res', res1.data.items[2].id);
+        console.log('res', res1.data.items[2].id);
         this.setState({ source_id: res1.data.items[2].id })
 
       })
@@ -155,8 +160,9 @@ class Form extends Component {
   }
 
   Resourceid() {
-    axios.post(`https://hst-api.wialon.com/wialon/ajax.html?svc=resource/update_driver&params={"itemId":${this.state.source_id},"id":0,"callMode":"create","n":"${this.state.driver_name}","p":"%2B${this.state.phone}","c":"","ds":"","jp":{"Tag%20ID":"${this.state.tagid}"}}&sid=${cookies.get("sid1")}`)
+    axios.post(`https://hst-api.wialon.com/wialon/ajax.html?svc=resource/update_driver&params={"itemId":${this.state.source_id},"id":0,"callMode":"create","n":"${this.state.driver_name}","p":"%2B${this.state.phone}","c":"${this.state.code}","ds":"","jp":{"Tag%20ID":"${this.state.tagid}"}}&sid=${cookies.get("sid1")}`)
       .then(res1 => {
+console.log('driv',res1.data);
 
       
 
@@ -231,7 +237,7 @@ class Form extends Component {
     axios.post(url)
       .then(res1 => {
        
-
+cookies.set("unit_id",res1.data.item.id)
         axios.post(`https://hst-api.wialon.com/wialon/ajax.html?svc=unit/update_mileage_counter&params={"itemId":${res1.data.item.id},"newValue":${this.state.km}}&sid=${cookies.get("sid1")}`)
         axios.post(`https://hst-api.wialon.com/wialon/ajax.html?svc=unit/update_calc_flags&params={"itemId":${res1.data.item.id},"newValue":"0x513"}&sid=${cookies.get("sid1")}`)
         axios.post(`https://hst-api.wialon.com/wialon/ajax.html?svc=unit/update_device_type&params={"itemId":${res1.data.item.id},"deviceTypeId":${this.state.device_name},"uniqueId":${this.state.uniqueId}}&sid=${cookies.get("sid1")}`)
@@ -261,6 +267,10 @@ class Form extends Component {
         toast.success("Unit added successfully ");
         this.btn(this.state.R_Value);
         this.setState({ spinone: false })
+        setTimeout(() => {
+          this.setState({spanmessage:true})
+          this.get_last_msg();
+        }, 300);
       })
 
       .catch(err => {
@@ -381,11 +391,11 @@ class Form extends Component {
               <legend style={{ width: '9%' }} >   نوع التقرير</legend>
               <div id='divch'>
                 <Check name='   نصب' id='chch' />
-                <Check name='  رفع' />
-                <Check name='  صيانة' />
-                <Check name='  ابدال' />
-                <Check name=' اخرى تذكر' />
-                <input type='text' id='inp_2' />
+                {/* <Check name='  رفع'  /> */}
+                <Check name='   صيانةاعادة تفعيل ' />
+                {/* <Check name='  ابدال' /> */}
+                {/* <Check name=' اخرى تذكر' /> */}
+                {/* <input type='text' id='inp_2' /> */}
 
               </div>
             </fieldset>
@@ -478,6 +488,12 @@ class Form extends Component {
                   }} />
                 </div>
                 <div id="in_div">
+                  <span id='spn1' >: رقم الكود</span> <input type='text' id='field' value={this.state.code} 
+                  onChange={(e)=>{
+                    this.setState({code:e.target.value})
+                  }} />
+                </div>
+                <div id="in_div">
                   <span id='spn1' >:  اسم السائق</span> <input type='text' id='field' value={this.state.driver_name}
                     onChange={(e) => {
                       this.setState({ driver_name: e.target.value })
@@ -513,7 +529,14 @@ class Form extends Component {
                   </div>
                 </fieldset>
 
+                <fieldset  style={{ marginRight: '10%', width: '90%' }}>
+                  <legend style={{ width: '12%' }} >  اطفاء</legend>
+                  <div id='divch'>
+                    <Check name='  قطع نارية' />
+                    <Check name='  فيوز' />
 
+                  </div>
+                </fieldset>
 
                 <fieldset style={{ marginRight: '10%', width: '90%' }} >
                   <legend style={{ width: '22%' }} >  تفاصيل الربط</legend>
@@ -531,14 +554,7 @@ class Form extends Component {
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', flexDirection: 'row-reverse' }}>
               <div style={{ display: 'flex', flexDirection: 'column', width: '45%' }}>
 
-                <fieldset style={{ width: '100%', height: 90 }} >
-                  <legend style={{ width: '12%' }} >  اطفاء</legend>
-                  <div id='divch'>
-                    <Check name='  قطع نارية' />
-                    <Check name='  فيوز' />
-
-                  </div>
-                </fieldset>
+            
                 <fieldset style={{ width: '100%', height: 90 }}   >
                   <legend style={{ width: '28%' }} >  تفاصيل المشرف</legend>
                   <div id="in_div">
@@ -591,6 +607,15 @@ class Form extends Component {
           </div>
         </div>
         <div id='form_add' >
+
+{this.state.spanmessage ===false?(
+  <div></div>
+):(
+  <Dialog name={this.state.item_name} sts={this.state.satellites} /> 
+)}
+
+
+
           <div id='addall2' onClick={() => {
              this.checkimei();
             // this.btn();
@@ -631,6 +656,59 @@ class Form extends Component {
    
    );
   }
+
+  get_last_msg(){
+
+
+    axios
+    .get(`https://hst-api.wialon.com/wialon/ajax.html?svc=core/search_item&params={"id":${cookies.get("unit_id")},"flags":1025}&sid=${cookies.get("sid1")}`, {
+      headers: {
+        Accept: "application/json"
+      }
+    })
+    .then(res => {
+  console.log(res.data);
+  this.setState({
+    item_name:res.data.item.nm,
+    satellites:res.data.item.lmsg.pos.sc
+  })
+  
+  })
+  .catch(err => {
+  
+  console.log("error:", err.data);
+  });
+
+
+
+
+
+
+    setInterval(() => {
+      axios
+      .get(`https://hst-api.wialon.com/wialon/ajax.html?svc=core/search_item&params={"id":${cookies.get("unit_id")},"flags":1025}&sid=${cookies.get("sid1")}`, {
+        headers: {
+          Accept: "application/json"
+        }
+      })
+      .then(res => {
+    console.log(res.data);
+    this.setState({
+      item_name:res.data.item.nm,
+      satellites:res.data.item.lmsg.pos.sc
+    })
+    
+    })
+    .catch(err => {
+    
+    console.log("error:", err.data);
+    });
+    }, 6000);
+    
+
+  }
+
+
 
 }
 export default Form;
