@@ -96,7 +96,9 @@ class Accounts extends Component {
     
       cookies.set("sid1",res1.data.eid);
     })
-   this.getAccounts()
+   setTimeout(() => {
+    this.getAccounts()
+   }, 300);
     
  
   }
