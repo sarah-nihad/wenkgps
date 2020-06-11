@@ -131,7 +131,7 @@ class Accounts extends Component {
 
 
 
-                
+                  this.setState({ dataLength: res.data.items.length })
                   let obj = {
                     hash: index + 1,
                     name: res.data.items[index].nm,
