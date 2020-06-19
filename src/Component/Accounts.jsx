@@ -10,8 +10,6 @@ import DoneIcon from "@material-ui/icons/Done";
 import { Redirect } from "react-router-dom";
 import { Table, Navbar } from 'react-bootstrap';
 import Cookies from "universal-cookie";
-import AddBoxIcon from '@material-ui/icons/AddBox';
-import MaterialDatatable from "material-datatable";
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import axios from 'axios';
 import Lottie from "lottie-react-web";
@@ -20,6 +18,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import load from "./load.json";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
+import $ from "min-jquery";
 const cookies = new Cookies();
 
 class Accounts extends Component {
@@ -68,129 +67,181 @@ class Accounts extends Component {
 
 
 
-  componentDidMount() {
+   componentDidMount() {
     const urlParams = new URLSearchParams(window.location.search);
 
 
 
     cookies.set("iduser", urlParams.get('id'));
     cookies.set("username", urlParams.get('nm'));
-
-    axios({
-      url: `http://hst-api.wialon.com/wialon/ajax.html?svc=token/login&params={"token":"${cookies.get("token")}","fl":2,"operateAs":"${urlParams.get('nm')}"}`,
-      method: "get",
-      crossDomain: true,
-      dataType: "jsonp",
-      enctype: "application/json",
-      processData: !1,
-      contentType: !1,
-
-    })
-
-      .then(res1 => {
-
-        this.setState({
-
-          check: "login"
-        })
-
-        cookies.set("sid1", res1.data.eid);
-      })
-    if (cookies.get("sid1")) {
+  
+    if (cookies.get("sid")) {
       this.getAccounts()
     }
-
 
 
   }
 
   async getAccounts() {
-    let arr = [];
-    await axios({
-      url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/search_items&params={"spec":{"itemsType":"avl_resource","propName":"rel_is_account,sys_name","propValueMask":"1,*","sortType":"sys_name"},"force":1,"flags":5,"from":0,"to":0}&sid=${cookies.get("sid1")}`,
-      method: "GET",
+
+    await $.ajax({
+      type: "GET",
+      enctype: "application/json",
+      processData: !1,
+      contentType: !1,
+      crossDomain: true,
+      dataType: "jsonp",
+      url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/search_items&params={"spec":{"itemsType":"avl_resource","propName":"rel_is_account,sys_name","propValueMask":"1,*","sortType":"sys_name"},"force":1,"flags":5,"from":0,"to":0}&sid=${cookies.get("sid")}`,
+      success: function (result) {
+        // console.log(result.items);
+        var newLength = result.items.length - 1
+        var counter3 = 0;
+        // console.log(newLength);
+        var arr = []; var arr1 = []; var arr2 = [];
+           for (let index = 0; index < newLength; index++) {
+
+
+
+
+
+          counter3++;
+
+          let ind0 = index
+          let ind1 = index += 1
+          console.log('tt', ind0);
+          console.log('tt1', ind1);
+
+          $.ajax({
+            type: "GET",
+            enctype: "application/json",
+            processData: !1,
+            contentType: !1,
+            crossDomain: true,
+            dataType: "jsonp",
+            url:`https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/get_account_data","params":{"itemId":${result.items[ind0].id},"type":2}},{"svc":"core/search_item","params":{"id":${result.items[ind0].id},"flags":4294967295}},{"svc":"account/get_account_data","params":{"itemId":${result.items[ind1].id},"type":2}},{"svc":"core/search_item","params":{"id":${result.items[ind1].id},"flags":4294967295}}],"flags":0}
+            &sid=${cookies.get("sid")}`,
+
+
+
+
+
+
+            // params={"itemId":[${result.items[ind0].id},${result.items[ind1].id}],"type":2}&sid=${cookies.get("sid")}`,
+            success: function (res1) {
+console.log('res1',res1);
+
+              var resArr = []
+
+              var entry = res1;
+                for (var a in entry) {
+                console.log('entry[a]',entry[a]);
+                console.log('a',a);
+                resArr.push(entry[a])
+               
+              }
+              console.log('resArr',resArr[2]);
+                if (resArr[0].settings !== undefined) {
+                  if (resArr[0].settings.personal.services.create_units !== undefined && resArr[0].settings.personal.services.import_export !== undefined) {
+                    if (resArr[0].settings.personal.services.create_units.cost === "" || resArr[0].settings.personal.services.import_export.cost === "") {
+  
+                      var obj = {
+                        name: resArr[1].item.nm,
+                        id: resArr[1].item.id,
+                        create_units: (resArr[0].settings.personal.services.create_units !== undefined ? (resArr[0].settings.personal.services.create_units.cost) : (null)),
+                        import_export: resArr[0].settings.personal.services.import_export,
+                      }
+  
+                      arr.push(obj);
+                    }
+                  }
+                }
+              
+                if (resArr[2] !== undefined  && resArr[2].settings !== undefined ) {
+                  if (resArr[2].settings.personal.services.create_units !== undefined && resArr[2].settings.personal.services.import_export !== undefined) {
+                    if (resArr[2].settings.personal.services.create_units.cost === "" || resArr[2].settings.personal.services.import_export.cost === "") {
+  
+                      var obj2 = {
+                        name: resArr[3].item.nm,
+                        id: resArr[3].item.id,
+                        create_units: (resArr[2].settings.personal.services.create_units !== undefined ? (resArr[2].settings.personal.services.create_units.cost) : (null)),
+                        import_export: resArr[2].settings.personal.services.import_export,
+                      }
+  
+                      arr.push(obj2);
+                    }
+                  }
+                }
+              // Object.keys(res1).forEach(function (resID) {
+
+              //   var singleResData = res1[resID];
+              //   // resArr.push(singleResData)
+
+              //   console.log('singleResData',singleResData);
+              // });
+
+
+              // if (resArr[1].settings !== undefined) {
+
+              //   if (resArr[1].settings.personal.services.create_units !== undefined && resArr[1].settings.personal.services.import_export !== undefined) {
+              //     if (resArr[1].settings.personal.services.create_units.cost === "" || resArr[1].settings.personal.services.import_export.cost === "") {
+              //       var obj2 = {
+              //         name: result.items[ind1 - 1].nm,
+              //         id: result.items[ind1 - 1].id,
+              //         create_units: (resArr[1].settings.personal.services.create_units !== undefined ? (resArr[1].settings.personal.services.create_units.cost) : (null)),
+              //         import_export: resArr[1].settings.personal.services.import_export,
+              //       }
+              //       arr.push(obj2);
+              //     }
+              //   }
+             
+
+
+
+
+            }.bind(this),
+          })
+
+        }
+
+
+        this.setState({ accountData: arr })
+        // if (counter3 === result.items.length) {
+        this.setState({ spindevice: false, check: 'login' })
+        this.setState({ accountData: arr })
+        // console.log(counter3===res.data.items.length);
+        // }
+      }.bind(this),
+      error: function (error) {
+        console.log('Error from response: ' + JSON.stringify(error))
+      }
     })
 
-      .then((res) => {
-        // console.log(res.data);
-
-        var counter3 = 0;
-        for (let index = 0; index < res.data.items.length; index++) {
-          counter3++;
-          axios({
-            url: `https://hst-api.wialon.com/wialon/ajax.html?svc=account/get_account_data&params={"itemId":${res.data.items[index].id},"type":2}&sid=${cookies.get("sid1")}`,
-            method: "GET",
-          })
-            .then((res1) => {
-              //  console.log('serv',res1.data);
-
-              if (res1.data.settings.personal.services.create_units !== undefined && res1.data.settings.personal.services.import_export !== undefined) {
-
-                if (res1.data.settings.personal.services.create_units.cost === "" || res1.data.settings.personal.services.import_export.cost === "") {
-
-
-
-
-                  this.setState({ dataLength: res.data.items.length })
-                  let obj = {
-                    hash: index + 1,
-                    name: res.data.items[index].nm,
-                    id: res.data.items[index].id,
-                    create_units: (res1.data.settings.personal.services.create_units !== undefined ? (res1.data.settings.personal.services.create_units.cost) : (null)),
-                    import_export: res1.data.settings.personal.services.import_export,
-                  }
-                  arr.push(obj);
-                }
-              }
-
-              })
-            .catch((err) => {
-              // console.log(err);
-
-            })
-
-        }
-        this.setState({ accountData: arr })
-        if (counter3 === res.data.items.length) {
-          this.setState({ spindevice: false, check: 'login' })
-          this.setState({ accountData: arr })
-          // console.log(counter3===res.data.items.length);
-
-        }
-
-      })
-
-
-
-
-      .catch((err) => {
-        console.log(err);
-
-      })
   }
+
+
+
 
   async closeAllUnit() {
     this.setState({ spin: true })
     var counter3 = 0;
     for (let index = 0; index < this.state.accountData.length; index++) {
-
-      await axios({
-        url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${this.state.accountData[index].id},"name":"create_units","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid1")}`,
-        method: "PUT",
-
-      })
-        .then(response => {
+      await $.ajax({
+        type: "PUT",
+        enctype: "application/json",
+        processData: !1,
+        contentType: !1,
+        crossDomain: true,
+        dataType: "jsonp",
+        url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${this.state.accountData[index].id},"name":"create_units","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid")}`,
+        success: function (result) {
           counter3++;
           if (counter3 === this.state.accountData.length) {
             toast.success("All Units Closed");
             this.setState({ spin: false });
-            this.componentDidMount()
-            // console.log('c',counter3);
-            // console.log('l',this.state.accountData.length);
-
+            this.componentDidMount();
           }
-        })
-
+        }.bind(this),
+      })
     }
   }
   async closeAllImport() {
@@ -198,55 +249,35 @@ class Accounts extends Component {
     var counter3 = 0;
     for (let index = 0; index < this.state.accountData.length; index++) {
 
-      await axios({
-        url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${this.state.accountData[index].id},"name":"import_export","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid1")}`,
-        method: "PUT",
-
-      })
-        .then(response => {
+      await $.ajax({
+        type: "PUT",
+        enctype: "application/json",
+        processData: !1,
+        contentType: !1,
+        crossDomain: true,
+        dataType: "jsonp",
+        url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${this.state.accountData[index].id},"name":"import_export","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid")}`,
+        success: function (result) {
           counter3++;
           if (counter3 === this.state.accountData.length) {
             toast.success("All Import Export Closed");
             this.setState({ spin: false });
-            this.componentDidMount()
-            // console.log('c',counter3);
-            // console.log('l',this.state.accountData.length);
-
+            this.componentDidMount();
           }
-        })
+        }.bind(this),
 
+      })
     }
   }
 
   render() {
-    const columns = [
-      { name: " # ", field: "hash" },
-      { name: " Name  ", field: "name" },
-      { name: "Create_Units", field: "create_units" },
-      { name: "Import_Export", field: "import_export" },
-
-
-    ];
-
-    const options = {
-      selectableRows: false,
-      print: false,
-      responsive: "scroll",
-      rowCursorHand: true,
-      sort: true,
-      filter: false,
-      rowsPerPageOptions: [15, 30, 50, 100],
-      download: true,
-      rowHover: true,
-      border: true
-    };
 
     return (
       <Context.Consumer>
         {ctx => {
           if (this.state.check === "notlogin") {
             return <Redirect to='/'></Redirect>;
-            return <div></div>
+
           } else if (this.state.check === "login" && this.state.spindevice === false) {
 
             return (
@@ -306,6 +337,7 @@ class Accounts extends Component {
                     width: '100%', margin: '3%'
                   }}  >
                     <button onClick={() => {
+                      // console.log(this.state.accountData);
 
                       this.setState({ check: 'login', show: true })
                     }} >Update Data</button>
@@ -342,17 +374,12 @@ class Accounts extends Component {
 
                         <th> Create_units </th>
                         <th> import_export</th>
-
-
-
-
-
                       </tr>
                     </thead>
                     <tbody>
                       {this.state.accountData.map((item, i) =>
                         <tr key={i} >
-                          <td> {i+1} </td>
+                          <td> {i + 1} </td>
                           <td>{item.name}</td>
                           <td>
                             {item.create_units !== undefined ? (
@@ -370,16 +397,20 @@ class Accounts extends Component {
                                       onClick={() => {
                                         setState({ spin: true });
 
-                                        axios({
-                                          url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${item.id},"name":"create_units","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid1")}`,
-                                          method: "PUT",
-                                        })
-                                          .then(response => {
-                                        toast.success("Done");
+                                        $.ajax({
+                                          type: "POST",
+                                          enctype: "application/json",
+                                          processData: !1,
+                                          contentType: !1,
+                                          crossDomain: true,
+                                          dataType: "jsonp",
+                                          url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${item.id},"name":"create_units","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid")}`,
+                                          success: function (result) {
+                                            toast.success("Done");
                                             setState({ spin: false });
-                                            this.getAccounts();
-                                          })
-
+                                            // this.getAccounts();
+                                          }.bind(this),
+                                        })
                                       }}
                                     />
                                   ) : (
@@ -392,18 +423,21 @@ class Accounts extends Component {
                                           onClick={() => {
                                             setState({ spin: true });
 
-                                            axios({
-                                              url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${item.id},"name":"create_units","type":1,"intervalType":0,"costTable":""}}],"flags":0}&sid=${cookies.get("sid1")}`,
-                                              method: "PUT",
-
-                                            })
-                                              .then(response => {
-
+                                            $.ajax({
+                                              type: "POST",
+                                              enctype: "application/json",
+                                              processData: !1,
+                                              contentType: !1,
+                                              crossDomain: true,
+                                              dataType: "jsonp",
+                                              url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${item.id},"name":"create_units","type":1,"intervalType":0,"costTable":""}}],"flags":0}&sid=${cookies.get("sid")}`,
+                                              success: function (result) {
                                                 toast.success("Done");
                                                 setState({ spin: false });
-                                                this.getAccounts();
+                                                // this.getAccounts();
+                                              }.bind(this),
 
-                                              })
+                                            })
                                           }}
                                         />
                                       )}
@@ -426,21 +460,21 @@ class Accounts extends Component {
                                       }}
                                       onClick={() => {
                                         setState({ spin: true });
-                                        var headers = {
-                                          jwt: cookies.get("token")
-                                        };
-                                        axios({
-                                          url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${item.id},"name":"import_export","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid1")}`,
-                                          method: "PUT",
 
-                                        })
-                                          .then(response => {
-
+                                        $.ajax({
+                                          type: "POST",
+                                          enctype: "application/json",
+                                          processData: !1,
+                                          contentType: !1,
+                                          crossDomain: true,
+                                          dataType: "jsonp",
+                                          url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${item.id},"name":"import_export","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid")}`,
+                                          success: function (result) {
                                             toast.success("Done");
                                             setState({ spin: false });
-                                            this.getAccounts();
-
-                                          })
+                                            // this.getAccounts();
+                                          }.bind(this),
+                                        })
                                       }}
                                     />
                                   ) : (
@@ -453,18 +487,21 @@ class Accounts extends Component {
                                           onClick={() => {
                                             setState({ spin: true });
 
-                                            axios({
-                                              url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${item.id},"name":"import_export","type":1,"intervalType":0,"costTable":""}}],"flags":0}&sid=${cookies.get("sid1")}`,
-                                              method: "PUT",
+                                            $.ajax({
+                                              type: "POST",
+                                              enctype: "application/json",
+                                              processData: !1,
+                                              contentType: !1,
+                                              crossDomain: true,
+                                              dataType: "jsonp",
+                                              url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${item.id},"name":"import_export","type":1,"intervalType":0,"costTable":""}}],"flags":0}&sid=${cookies.get("sid")}`,
+                                              success: function (result) {
+                                                toast.success("Done");
+                                                setState({ spin: false });
+                                                // this.getAccounts();
+                                              }.bind(this),
 
                                             })
-                                              .then(response => {
-
-                                              toast.success("Done");
-                                                setState({ spin: false });
-                                                this.getAccounts();
-
-                                              })
                                           }}
                                         />
                                       )}
