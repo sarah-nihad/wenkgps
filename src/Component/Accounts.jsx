@@ -100,10 +100,6 @@ class Accounts extends Component {
         var arr = []; var arr1 = []; var arr2 = [];
            for (let index = 0; index < newLength; index++) {
 
-
-
-
-
           counter3++;
 
           let ind0 = index
@@ -119,31 +115,23 @@ class Accounts extends Component {
             crossDomain: true,
             dataType: "jsonp",
             url:`https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/get_account_data","params":{"itemId":${result.items[ind0].id},"type":2}},{"svc":"core/search_item","params":{"id":${result.items[ind0].id},"flags":4294967295}},{"svc":"account/get_account_data","params":{"itemId":${result.items[ind1].id},"type":2}},{"svc":"core/search_item","params":{"id":${result.items[ind1].id},"flags":4294967295}}],"flags":0}
-            &sid=${cookies.get("sid")}`,
-
-
-
-
-
-
-            // params={"itemId":[${result.items[ind0].id},${result.items[ind1].id}],"type":2}&sid=${cookies.get("sid")}`,
+            &sid=${cookies.get("sid")}`,    
             success: function (res1) {
-console.log('res1',res1);
+              console.log('res1',res1);
 
               var resArr = []
 
               var entry = res1;
                 for (var a in entry) {
-                console.log('entry[a]',entry[a]);
-                console.log('a',a);
+                // console.log('entry[a]',entry[a]);
+                // console.log('a',a);
                 resArr.push(entry[a])
                
               }
-              console.log('resArr',resArr[2]);
+             
                 if (resArr[0].settings !== undefined) {
                   if (resArr[0].settings.personal.services.create_units !== undefined && resArr[0].settings.personal.services.import_export !== undefined) {
-                    if (resArr[0].settings.personal.services.create_units.cost === "" || resArr[0].settings.personal.services.import_export.cost === "") {
-  
+                    if (resArr[0].settings.personal.services.create_units.cost === "" || resArr[0].settings.personal.services.import_export.cost === "") {  
                       var obj = {
                         name: resArr[1].item.nm,
                         id: resArr[1].item.id,
@@ -225,6 +213,9 @@ console.log('res1',res1);
     this.setState({ spin: true })
     var counter3 = 0;
     for (let index = 0; index < this.state.accountData.length; index++) {
+      if (this.state.accountData[index].id === 12138908 ) {
+        continue;
+      }
       await $.ajax({
         type: "PUT",
         enctype: "application/json",
@@ -235,7 +226,7 @@ console.log('res1',res1);
         url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${this.state.accountData[index].id},"name":"create_units","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid")}`,
         success: function (result) {
           counter3++;
-          if (counter3 === this.state.accountData.length) {
+          if (counter3 === this.state.accountData.length-1) {
             toast.success("All Units Closed");
             this.setState({ spin: false });
             this.componentDidMount();
@@ -248,7 +239,9 @@ console.log('res1',res1);
     this.setState({ spin: true })
     var counter3 = 0;
     for (let index = 0; index < this.state.accountData.length; index++) {
-
+      if (this.state.accountData[index].id === 12138908 ) {
+        continue;
+      }
       await $.ajax({
         type: "PUT",
         enctype: "application/json",
@@ -259,7 +252,7 @@ console.log('res1',res1);
         url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${this.state.accountData[index].id},"name":"import_export","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid")}`,
         success: function (result) {
           counter3++;
-          if (counter3 === this.state.accountData.length) {
+          if (counter3 === this.state.accountData.length-1) {
             toast.success("All Import Export Closed");
             this.setState({ spin: false });
             this.componentDidMount();
