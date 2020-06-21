@@ -1,7 +1,7 @@
 import React from 'react';
 import './task.css';
 import Context from './context';
-import { SelectMenu, Button, Pane, Dialog, Spinner } from "evergreen-ui";
+import {  Spinner } from "evergreen-ui";
 import Component from "@reactions/component";
 import IconButton from '@material-ui/core/IconButton';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -10,8 +10,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import { Redirect } from "react-router-dom";
 import { Table, Navbar } from 'react-bootstrap';
 import Cookies from "universal-cookie";
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-import axios from 'axios';
+import { createMuiTheme } from '@material-ui/core/styles';
 import Lottie from "lottie-react-web";
 import animation from "./animation.json";
 import Tooltip from '@material-ui/core/Tooltip';
@@ -29,7 +28,7 @@ class Accounts extends Component {
       spindevice: true,
       name1: '',
       check: '',
-      data1: [],
+      data: [],
       name: '',
       id: '',
       spin: false,
@@ -67,21 +66,30 @@ class Accounts extends Component {
 
 
 
-   componentDidMount() {
+  componentDidMount() {
     const urlParams = new URLSearchParams(window.location.search);
 
 
 
     cookies.set("iduser", urlParams.get('id'));
     cookies.set("username", urlParams.get('nm'));
-  
+
     if (cookies.get("sid")) {
       this.getAccounts()
     }
 
 
   }
-
+  chunkArray(arr, chunkCount) {
+    let chunks = [];
+    while (arr.length) {
+      const chunkSize = Math.ceil(arr.length / chunkCount--);
+      const chunk = arr.slice(0, chunkSize);
+      chunks.push(chunk);
+      arr = arr.slice(chunkSize);
+    }
+    return chunks;
+  }
   async getAccounts() {
 
     await $.ajax({
@@ -93,111 +101,89 @@ class Accounts extends Component {
       dataType: "jsonp",
       url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/search_items&params={"spec":{"itemsType":"avl_resource","propName":"rel_is_account,sys_name","propValueMask":"1,*","sortType":"sys_name"},"force":1,"flags":5,"from":0,"to":0}&sid=${cookies.get("sid")}`,
       success: function (result) {
-        // console.log(result.items);
-        var newLength = result.items.length - 1
-        var counter3 = 0;
-        // console.log(newLength);
-        var arr = []; var arr1 = []; var arr2 = [];
-           for (let index = 0; index < newLength; index++) {
 
-          counter3++;
 
-          let ind0 = index
-          let ind1 = index += 1
-          console.log('tt', ind0);
-          console.log('tt1', ind1);
+        this.setState({ data: result.items })
+        var arr = [];        
+        var name = [];             
+        var resArr = []
+        var dataArry = this.chunkArray(result.items, 5)    
+        let counter = 0;
 
-          $.ajax({
-            type: "GET",
-            enctype: "application/json",
-            processData: !1,
-            contentType: !1,
-            crossDomain: true,
-            dataType: "jsonp",
-            url:`https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/get_account_data","params":{"itemId":${result.items[ind0].id},"type":2}},{"svc":"core/search_item","params":{"id":${result.items[ind0].id},"flags":4294967295}},{"svc":"account/get_account_data","params":{"itemId":${result.items[ind1].id},"type":2}},{"svc":"core/search_item","params":{"id":${result.items[ind1].id},"flags":4294967295}}],"flags":0}
-            &sid=${cookies.get("sid")}`,    
-            success: function (res1) {
-              console.log('res1',res1);
+                    // console.log(dataArry);
 
-              var resArr = []
 
-              var entry = res1;
-                for (var a in entry) {
-                // console.log('entry[a]',entry[a]);
-                // console.log('a',a);
-                resArr.push(entry[a])
-               
-              }
-             
-                if (resArr[0].settings !== undefined) {
-                  if (resArr[0].settings.personal.services.create_units !== undefined && resArr[0].settings.personal.services.import_export !== undefined) {
-                    if (resArr[0].settings.personal.services.create_units.cost === "" || resArr[0].settings.personal.services.import_export.cost === "") {  
-                      var obj = {
-                        name: resArr[1].item.nm,
-                        id: resArr[1].item.id,
-                        create_units: (resArr[0].settings.personal.services.create_units !== undefined ? (resArr[0].settings.personal.services.create_units.cost) : (null)),
-                        import_export: resArr[0].settings.personal.services.import_export,
+        for (let index = 0; index < dataArry.length; index++) {
+
+          let ss1 = []
+          for (let i = 0; i <= dataArry[index].length - 1; i++) {
+
+            const element = result.items[counter].id;
+            ss1.push(element)
+            const data = {
+              nm: result.items[counter].nm,
+              id: result.items[counter].id
+            };
+            name.push(data)
+
+            if (i == dataArry[index].length - 1) {
+
+              $.ajax({
+                type: "GET",
+                enctype: "application/json",
+                processData: !1,
+                contentType: !1,
+                crossDomain: true,
+                dataType: "jsonp",
+                url: `https://hst-api.wialon.com/wialon/ajax.html?svc=account/get_account_data&params={"itemId":[${ss1}],"type":2}
+                 &sid=${cookies.get("sid")}`,
+                success: function (res1) {
+
+                  var resArr22 = []
+                  Object.keys(res1).map((key, ie) => {
+                    resArr22.push({ "id": res1[key], "key": key })
+                    // console.log('key', resArr22[ie].key);
+                    if (resArr22[ie].id.settings !== undefined) {
+                      if (resArr22[ie].id.settings.personal.services.create_units !== undefined && resArr22[ie].id.settings.personal.services.import_export !== undefined) {
+                        if (resArr22[ie].id.settings.personal.services.create_units.cost !== "-1" || resArr22[ie].id.settings.personal.services.import_export.cost !== "-1") {
+                          //  console.log('ll',resArr22[ie].key);
+
+
+                          let obs = name.find(o => o.id === JSON.parse(resArr22[ie].key))
+
+
+                          var obj = {
+                            name: obs.nm,
+                            id: obs.id,
+                            create_units: resArr22[ie].id.settings.personal.services.create_units.cost,
+                            import_export: resArr22[ie].id.settings.personal.services.import_export.cost,
+                          }
+                          resArr.push(obj);
+                        }
                       }
-  
-                      arr.push(obj);
                     }
-                  }
+
+                  })
+
+                  this.setState({ accountData: resArr })
+
+                  //        this.setState({ accountData: resArr })
+
+                }.bind(this),
+                error: function (error) {
+                  console.log('Error from response: ' + JSON.stringify(error))
                 }
-              
-                if (resArr[2] !== undefined  && resArr[2].settings !== undefined ) {
-                  if (resArr[2].settings.personal.services.create_units !== undefined && resArr[2].settings.personal.services.import_export !== undefined) {
-                    if (resArr[2].settings.personal.services.create_units.cost === "" || resArr[2].settings.personal.services.import_export.cost === "") {
-  
-                      var obj2 = {
-                        name: resArr[3].item.nm,
-                        id: resArr[3].item.id,
-                        create_units: (resArr[2].settings.personal.services.create_units !== undefined ? (resArr[2].settings.personal.services.create_units.cost) : (null)),
-                        import_export: resArr[2].settings.personal.services.import_export,
-                      }
-  
-                      arr.push(obj2);
-                    }
-                  }
-                }
-              // Object.keys(res1).forEach(function (resID) {
-
-              //   var singleResData = res1[resID];
-              //   // resArr.push(singleResData)
-
-              //   console.log('singleResData',singleResData);
-              // });
+              })
+            }
+            counter = counter + 1;
 
 
-              // if (resArr[1].settings !== undefined) {
-
-              //   if (resArr[1].settings.personal.services.create_units !== undefined && resArr[1].settings.personal.services.import_export !== undefined) {
-              //     if (resArr[1].settings.personal.services.create_units.cost === "" || resArr[1].settings.personal.services.import_export.cost === "") {
-              //       var obj2 = {
-              //         name: result.items[ind1 - 1].nm,
-              //         id: result.items[ind1 - 1].id,
-              //         create_units: (resArr[1].settings.personal.services.create_units !== undefined ? (resArr[1].settings.personal.services.create_units.cost) : (null)),
-              //         import_export: resArr[1].settings.personal.services.import_export,
-              //       }
-              //       arr.push(obj2);
-              //     }
-              //   }
-             
-
-
-
-
-            }.bind(this),
-          })
-
+          }
         }
 
 
-        this.setState({ accountData: arr })
-        // if (counter3 === result.items.length) {
         this.setState({ spindevice: false, check: 'login' })
         this.setState({ accountData: arr })
-        // console.log(counter3===res.data.items.length);
-        // }
       }.bind(this),
       error: function (error) {
         console.log('Error from response: ' + JSON.stringify(error))
@@ -213,7 +199,7 @@ class Accounts extends Component {
     this.setState({ spin: true })
     var counter3 = 0;
     for (let index = 0; index < this.state.accountData.length; index++) {
-      if (this.state.accountData[index].id === 12138908 ) {
+      if (this.state.accountData[index].id === 12138908) {
         continue;
       }
       await $.ajax({
@@ -226,7 +212,7 @@ class Accounts extends Component {
         url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${this.state.accountData[index].id},"name":"create_units","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid")}`,
         success: function (result) {
           counter3++;
-          if (counter3 === this.state.accountData.length-1) {
+          if (counter3 === this.state.accountData.length - 1) {
             toast.success("All Units Closed");
             this.setState({ spin: false });
             this.componentDidMount();
@@ -239,7 +225,7 @@ class Accounts extends Component {
     this.setState({ spin: true })
     var counter3 = 0;
     for (let index = 0; index < this.state.accountData.length; index++) {
-      if (this.state.accountData[index].id === 12138908 ) {
+      if (this.state.accountData[index].id === 12138908) {
         continue;
       }
       await $.ajax({
@@ -252,7 +238,7 @@ class Accounts extends Component {
         url: `https://hst-api.wialon.com/wialon/ajax.html?svc=core/batch&params={"params":[{"svc":"account/update_billing_service","params":{"itemId":${this.state.accountData[index].id},"name":"import_export","type":1,"intervalType":0,"costTable":"-1"}}],"flags":0}&sid=${cookies.get("sid")}`,
         success: function (result) {
           counter3++;
-          if (counter3 === this.state.accountData.length-1) {
+          if (counter3 === this.state.accountData.length - 1) {
             toast.success("All Import Export Closed");
             this.setState({ spin: false });
             this.componentDidMount();
@@ -329,17 +315,18 @@ class Accounts extends Component {
                     display: 'flex', alignItems: 'center', justifyContent: 'space-around',
                     width: '100%', margin: '3%'
                   }}  >
-                    <button onClick={() => {
-                      // console.log(this.state.accountData);
+                    {/* <button onClick={() => {
+                      // console.log(this.state.data);
+
 
                       this.setState({ check: 'login', show: true })
-                    }} >Update Data</button>
-                    <button onClick={() => {
+                    }} >Update Data</button> */}
+                    <div id='upload'  onClick={() => {
                       this.closeAllUnit()
-                    }} >Close All Unit</button>
-                    <button onClick={() => {
+                    }} >Close All Unit</div>
+                    <div id='upload'    onClick={() => {
                       this.closeAllImport()
-                    }} >Close All Import Exports</button>
+                    }} >Close All Import Exports</div>
                     {this.state.spin === true ? (
                       <div
                         style={{
@@ -402,7 +389,7 @@ class Accounts extends Component {
                                             toast.success("Done");
                                             setState({ spin: false });
                                             // this.getAccounts();
-                                          }.bind(this),
+                                          }
                                         })
                                       }}
                                     />
@@ -428,7 +415,7 @@ class Accounts extends Component {
                                                 toast.success("Done");
                                                 setState({ spin: false });
                                                 // this.getAccounts();
-                                              }.bind(this),
+                                              }
 
                                             })
                                           }}
@@ -444,7 +431,7 @@ class Accounts extends Component {
                                 {({ state, setState }) =>
                                   state.spin ? (
                                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} >  <Spinner size={16} /></div>
-                                  ) : item.import_export.cost === "" ? (
+                                  ) : item.import_export === "" ? (
                                     <DoneIcon
                                       style={{
                                         color: "#5bb061",
@@ -466,7 +453,7 @@ class Accounts extends Component {
                                             toast.success("Done");
                                             setState({ spin: false });
                                             // this.getAccounts();
-                                          }.bind(this),
+                                          }
                                         })
                                       }}
                                     />
@@ -492,7 +479,7 @@ class Accounts extends Component {
                                                 toast.success("Done");
                                                 setState({ spin: false });
                                                 // this.getAccounts();
-                                              }.bind(this),
+                                              }
 
                                             })
                                           }}
