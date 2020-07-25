@@ -199,7 +199,7 @@ class Units extends Component {
               contentType: !1,
               crossDomain: true,
               dataType: "jsonp",
-              url: `https://geocode-maps.wialon.com/hst-api.wialon.com/gis_geocode?coords=[{"lon":${result[0].items[index].pos.x},"lat":${result[0].items[index].pos.y}}]&flags=1255211008&uid=${cookies.get("iduser")}&sid=${cookies.get("sid1")}`,
+              url: `https://geocode-maps.wialon.com/hst-api.wialon.com/gis_geocode?coords=[{"lon":${result[0].items[index].pos.x},"lat":${result[0].items[index].pos.y}}]&flags=805306368&uid=${cookies.get("iduser")}&sid=${cookies.get("sid1")}`,
               success: function (res) {
                   // console.log(res[0]);
                 
